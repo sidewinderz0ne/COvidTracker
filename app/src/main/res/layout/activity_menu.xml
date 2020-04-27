@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ActivityMenu"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/icon_login"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="#DIRUMAHAJA"
+        android:textSize="30sp"
+        android:textColor="@color/themeBlue"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="300dp"
+        android:id="@+id/btMasukMenu"
+        android:layout_height="wrap_content"
+        android:text="Masuk"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/colorMainSSMSPurple"
+        app:cornerRadius="7dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="300dp"
+        android:id="@+id/btMonitoring"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/colorMainSSMSPurple"
+        android:layout_height="wrap_content"
+        android:text="Monitoring"
+        app:cornerRadius="7dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stay Safe!! #DIRUMAHAJA"
+        android:textColor="@color/colorMainSSMSPurple"/>
+
+</LinearLayout>
