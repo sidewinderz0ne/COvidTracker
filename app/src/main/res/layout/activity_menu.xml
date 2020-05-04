@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:text="#DIRUMAHAJA"
         android:textSize="30sp"
-        android:textColor="@color/themeBlue"/>
+        android:textColor="#009688"/>
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="300dp"

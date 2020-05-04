@@ -24,23 +24,15 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_karantina.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-const val TAG_NAMA = "nama"
-const val TAG_IMEI = "imei"
-const val TAG_LONGITUDE = "longitude"
-const val TAG_LATITUDE = "latitude"
-const val TAG_WAKTU = "waktu"
-const val TAG_ALAMAT = "alamat"
-const val TAG_SUCCESS = "success"
-
 @Suppress("KDocUnresolvedReference")
-class MainActivity : AppCompatActivity() {
+class Karantina : AppCompatActivity() {
 
     val url = "https://palmsentry.srs-ssms.com/palmsentry/tracking.php"
 
@@ -60,14 +52,14 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("HardwareIds")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_karantina)
         val prefMan = PrefManager(this)
 
         updateValuesFromBundle(savedInstanceState)
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         mSettingsClient = LocationServices.getSettingsClient(this)
 
-        btMasuk.setOnClickListener {
+        btDaftar.setOnClickListener {
             if (etNama.text.isEmpty() || etAlamat.text.isEmpty()){
                 Toast.makeText(this, "Mohon isi kolom nama dan alamat!!", Toast.LENGTH_SHORT).show()
             } else {
@@ -76,15 +68,16 @@ class MainActivity : AppCompatActivity() {
                     prefMan.logged = true
                     prefMan.alamat = etAlamat.text.toString()
                     prefMan.imei = tm
-                val intent = Intent(this@MainActivity, MainActivity::class.java)
+                val intent = Intent(this@Karantina, Karantina::class.java)
                 startActivity(intent)
             }
         }
 
+        Toast.makeText(this, prefMan.logged.toString(), Toast.LENGTH_SHORT).show()
         if (prefMan.logged){
             etNama.visibility = View.GONE
             etAlamat.visibility = View.GONE
-            btMasuk.visibility = View.GONE
+            btDaftar.visibility = View.GONE
             createLocationCallback()
             createLocationRequest()
             buildLocationSettingsRequest()
@@ -92,19 +85,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun execute(){
+        startLocationUpdates()
+    }
+
     override fun onBackPressed() {
-        val intent = Intent(this@MainActivity, ActivityMenu::class.java)
+        val intent = Intent(this@Karantina, ActivityMenu::class.java)
         startActivity(intent)
     }
 
-    private fun checkRegister(namaLengkap: String, imei: String, longitude: Double, latitude: Double,
+    private fun checkRegister(namaLengkap: String, imei: String, latitude: Double, longitude: Double,
                               waktu: String, alamat: String) {
         val strReq: StringRequest = object : StringRequest(Method.POST, url, Response.Listener { response ->
             try {
                 val jObj = JSONObject(response)
-                val success = jObj.getInt(TAG_SUCCESS)
+                val success = jObj.getInt(Db().TAG_SUCCESS)
                 if (success == 1) {
-                    Toast.makeText(this@MainActivity, "sukses", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@Karantina, "sukses", Toast.LENGTH_LONG).show()
                 } else{
                     Toast.makeText(applicationContext,
                         jObj.getString(success.toString()), Toast.LENGTH_LONG).show()
@@ -117,12 +114,12 @@ class MainActivity : AppCompatActivity() {
         }) {
             override fun getParams(): Map<String, String> {
                 val params: MutableMap<String, String> = HashMap()
-                params[TAG_NAMA] = namaLengkap
-                params[TAG_IMEI] = imei
-                params[TAG_WAKTU] = waktu
-                params[TAG_LATITUDE] = latitude.toString()
-                params[TAG_LONGITUDE] = longitude.toString()
-                params[TAG_ALAMAT] = alamat
+                params[Db().TAG_NAMA] = namaLengkap
+                params[Db().TAG_IMEI] = imei
+                params[Db().TAG_WAKTU] = waktu
+                params[Db().TAG_LATITUDE] = latitude.toString()
+                params[Db().TAG_LONGITUDE] = longitude.toString()
+                params[Db().TAG_ALAMAT] = alamat
                 return params
             }
         }
@@ -187,7 +184,7 @@ class MainActivity : AppCompatActivity() {
     }
     private fun startLocationUpdates() {
         mSettingsClient!!.checkLocationSettings(mLocationSettingsRequest)
-                .addOnSuccessListener(this@MainActivity) {
+                .addOnSuccessListener(this@Karantina) {
                     Log.i(TAG, "All location settings are satisfied.")
                     mFusedLocationClient!!.requestLocationUpdates(
                             mLocationRequest,
@@ -195,7 +192,7 @@ class MainActivity : AppCompatActivity() {
                     )
                     updateUI()
                 }
-                .addOnFailureListener(this@MainActivity) { e ->
+                .addOnFailureListener(this@Karantina) { e ->
                     when ((e as ApiException).statusCode) {
                         LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
                             Log.i(
@@ -204,7 +201,7 @@ class MainActivity : AppCompatActivity() {
                             )
                             try {
                                 val rae = e as ResolvableApiException
-                                rae.startResolutionForResult(this@MainActivity, REQUEST_CHECK_SETTINGS)
+                                rae.startResolutionForResult(this@Karantina, REQUEST_CHECK_SETTINGS)
                             } catch (sie: IntentSender.SendIntentException) {
                                 Log.i(TAG, "PendingIntent unable to execute request.")
                             }
@@ -213,7 +210,7 @@ class MainActivity : AppCompatActivity() {
                             val errorMessage = "Location settings are inadequate, and cannot be " +
                                     "fixed here. Fix in Settings."
                             Log.e(TAG, errorMessage)
-                            Toast.makeText(this@MainActivity, errorMessage, Toast.LENGTH_LONG).show()
+                            Toast.makeText(this@Karantina, errorMessage, Toast.LENGTH_LONG).show()
                             mRequestingLocationUpdates = false
                         }
                     }
@@ -230,8 +227,7 @@ class MainActivity : AppCompatActivity() {
     private fun updateLocationUI() {
         val prefManager = PrefManager(this)
         if (mCurrentLocation != null) {
-            val date: DateFormat = SimpleDateFormat("yyyy-M-dd hh:mm:ss")
-            val dateFormatted = date.format(Calendar.getInstance().time)
+            val dateFormatted = SimpleDateFormat("yyyy-M-dd hh:mm:ss").format(Calendar.getInstance().time)
             lat = String.format(Locale.ENGLISH, "%s",
                     mCurrentLocation!!.latitude).toDouble()
             lon = String.format(Locale.ENGLISH, "%s",
@@ -294,7 +290,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkPermissions(): Boolean {
         val permissionState = ActivityCompat.checkSelfPermission(
-                this@MainActivity,
+                this@Karantina,
                 Manifest.permission.ACCESS_FINE_LOCATION
         )
         if (permissionState == PackageManager.PERMISSION_GRANTED) {
@@ -305,19 +301,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun requestPermissions() {
         val shouldProvideRationale = ActivityCompat.shouldShowRequestPermissionRationale(
-                this@MainActivity,
+                this@Karantina,
                 Manifest.permission.ACCESS_FINE_LOCATION
         )
         if (shouldProvideRationale) {
             Log.i(TAG, "Displaying permission rationale to provide additional context.")
             ActivityCompat.requestPermissions(
-                    this@MainActivity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    this@Karantina, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                     REQUEST_PERMISSIONS_REQUEST_CODE
             )
         } else {
             Log.i(TAG, "Requesting permission")
             ActivityCompat.requestPermissions(
-                    this@MainActivity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    this@Karantina, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                     REQUEST_PERMISSIONS_REQUEST_CODE
             )
         }
@@ -357,7 +353,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        private val TAG = MainActivity::class.java.simpleName
+        private val TAG = Karantina::class.java.simpleName
         private const val REQUEST_PERMISSIONS_REQUEST_CODE = 34
         private const val REQUEST_CHECK_SETTINGS = 0x1
         private const val UPDATE_INTERVAL_IN_MILLISECONDS: Long = 10000

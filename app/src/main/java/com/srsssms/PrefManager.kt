@@ -11,8 +11,8 @@ class PrefManager(_context: Context) {
 
     var logged: Boolean
         get() = pref.getBoolean(LOGGED, false)
-        set(loggedin) {
-            editor.putBoolean(LOGGED, loggedin)
+        set(logged) {
+            editor.putBoolean(LOGGED, logged)
             editor.commit()
         }
 
@@ -37,14 +37,37 @@ class PrefManager(_context: Context) {
             editor.commit()
         }
 
+    var latA: String?
+        get() = pref.getString(LATA, null)
+        set(lata) {
+            editor.putString(LATA, lata)
+            editor.commit()
+        }
+
+    var lonA: String?
+        get() = pref.getString(LONA, null)
+        set(lona) {
+            editor.putString(LONA, lona)
+            editor.commit()
+        }
+
+    var userID: String?
+        get() = pref.getString(USERID, null)
+        set(user) {
+            editor.putString(USERID, user)
+            editor.commit()
+        }
+
     companion object {
         // Shared preferences file name
-        private const val PREF_NAME = "sulungresearch"
-        private const val IS_FIRST_TIME_LAUNCH = "IsFirstTimeLaunch"
-        private const val LOGGED = "Logged"
-        private const val NAME = "Name"
-        private const val IMEI = "IMEI"
-        private const val ALAMAT = "Alamat"
+        private const val PREF_NAME = "covidtracker"
+        private const val LOGGED = "logged"
+        private const val USERID = "user_id"
+        private const val NAME = "name"
+        private const val IMEI = "device_id"
+        private const val ALAMAT = "alamat"
+        private const val LATA = "latitude_a"
+        private const val LONA = "longitude_a"
     }
 
     init {

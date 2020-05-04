@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Karantina"
+    android:background="@color/covidPrimary">
+
+    <LinearLayout
+        android:id="@+id/linearLayoutKarantina"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/circleKarantina"
+            android:layout_width="1000dp"
+            android:layout_height="1000dp"
+            android:layout_marginTop="-150dp"
+            android:background="@drawable/circle"
+            tools:ignore="ContentDescription" />
+    </LinearLayout>
+
+    <include
+        android:id="@+id/logoKarantina"
+        layout="@layout/logo_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+
+    <TextView
+        android:id="@+id/tvKarantinaDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/segoeui"
+        android:gravity="left"
+        android:paddingLeft="32dp"
+        android:paddingRight="32dp"
+        android:text="@string/silahkan_mendaftar"
+        android:textColor="@color/covidPrimary"
+        android:textSize="28sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logoKarantina"
+        tools:ignore="RtlHardcoded" />
+
+    <EditText
+        android:textColor="@color/covidPrimary"
+        android:backgroundTint="@color/covidPrimary"
+        android:id="@+id/etNama"
+        android:layout_marginTop="32dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:fontFamily="@font/seguisb"
+        android:hint="Nama Lengkap"
+        android:textSize="24sp"
+        android:textColorHint="@color/colorAccent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvKarantinaDesc" />
+
+    <EditText
+        android:textColor="@color/covidPrimary"
+        android:backgroundTint="@color/covidPrimary"
+        android:id="@+id/etAlamat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:fontFamily="@font/seguisb"
+        android:hint="Alamat"
+        android:textSize="24sp"
+        android:textColorHint="@color/colorAccent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etNama"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btDaftar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/seguisb"
+        android:text="Daftar"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/etAlamat"
+        app:layout_constraintTop_toBottomOf="@+id/etAlamat" />
+
+    <TextView
+        android:fontFamily="@font/seguisb"
+        android:textSize="18sp"
+        android:textColor="@color/covidPrimary"
+        android:id="@+id/perluBantuanKarantina"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginBottom="150dp"
+        android:text="Perlu bantuan?"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayoutKarantina"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

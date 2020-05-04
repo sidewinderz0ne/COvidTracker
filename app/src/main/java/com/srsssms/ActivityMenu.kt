@@ -10,7 +10,7 @@ class ActivityMenu : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
         btMasukMenu.setOnClickListener {
-            val intent = Intent(this@ActivityMenu, MainActivity::class.java)
+            val intent = Intent(this@ActivityMenu, Karantina::class.java)
             startActivity(intent)
         }
         btMonitoring.setOnClickListener {
