@@ -2,25 +2,40 @@
   <dictionary name="pelan">
     <words>
       <w>alamat</w>
+      <w>anda</w>
       <w>animasi</w>
+      <w>apakah</w>
       <w>atau</w>
       <w>atur</w>
       <w>belum</w>
+      <w>benar</w>
+      <w>buat</w>
+      <w>checkregister</w>
       <w>covid</w>
       <w>dengan</w>
+      <w>departemen</w>
       <w>deskripsi</w>
       <w>deviceid</w>
+      <w>gagal</w>
+      <w>gawai</w>
+      <w>gunakan</w>
       <w>hilangkan</w>
       <w>hubungkan</w>
+      <w>idtrack</w>
       <w>imei</w>
+      <w>jaringan</w>
+      <w>kami</w>
       <w>karantina</w>
       <w>kolom</w>
       <w>kondisi</w>
       <w>konek</w>
       <w>koneksi</w>
+      <w>konfirmasi</w>
       <w>lata</w>
       <w>lengkap</w>
       <w>lingkaran</w>
+      <w>lokasi</w>
+      <w>masuk</w>
       <w>membuat</w>
       <w>memindahkan</w>
       <w>mendaftar</w>
@@ -29,17 +44,26 @@
       <w>nama</w>
       <w>pantone</w>
       <w>penentuan</w>
+      <w>pengaturan</w>
+      <w>registerdebug</w>
+      <w>registrasi</w>
       <w>segoeui</w>
       <w>silahkan</w>
       <w>ssms</w>
       <w>stabil</w>
+      <w>sudah</w>
+      <w>sukses</w>
+      <w>telah</w>
+      <w>terdaftar</w>
       <w>terkirim</w>
       <w>tidak</w>
+      <w>tunggu</w>
       <w>udah</w>
       <w>ulang</w>
       <w>untuk</w>
       <w>userid</w>
       <w>waktu</w>
+      <w>yakin</w>
     </words>
   </dictionary>
 </component>

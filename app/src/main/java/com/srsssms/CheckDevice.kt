@@ -10,6 +10,7 @@ import android.net.NetworkInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import com.android.volley.Response
@@ -22,14 +23,12 @@ import java.util.*
 
 class CheckDevice : AppCompatActivity() {
 
-    val TAG_DEVICEID = "device_id"
-
     @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "DEPRECATION")
     @SuppressLint("HardwareIds")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_check_device)
-
+        Log.d("registerdebug", "Device ID: ${Settings.Secure.getString(this@CheckDevice.contentResolver, Settings.Secure.ANDROID_ID)}")
         animCheck.setAnimation("checking.json")//ANIMATION WITH LOTTIE FOR CHECKING DEVICE
         animCheck.loop(true)
         animCheck.playAnimation()
@@ -68,22 +67,23 @@ class CheckDevice : AppCompatActivity() {
         animCheck.loop(true)
         animCheck.playAnimation()
         //method volley buat login (POST data to PHP)
-        @Suppress("UNUSED_ANONYMOUS_PARAMETER") val strReq: StringRequest = object : StringRequest(Method.POST, Db().TAG_URL + "login.php",
+                @Suppress("UNUSED_ANONYMOUS_PARAMETER") val strReq: StringRequest = object : StringRequest(Method.POST, "${Db.TAG_URL}login.php",
             Response.Listener { response ->
                 try {
                     val jObj = JSONObject(response)
-                    val success = jObj.getInt(Db().TAG_SUCCESS)
+                    val success = jObj.getInt(Db.TAG_SUCCESS)
+                    Log.d("registerdebug", "success code: $success")
                     // Check for error node in json
                     if (success == 1) {
                         checkGoner()
                         //pengaturan shared preferences
                         val prefMan = PrefManager(this)
                         prefMan.logged = true
-                        prefMan.userID = jObj.getInt(Db().TAG_USERID).toString()
-                        prefMan.name = jObj.getString(Db().TAG_NAMA)
-                        prefMan.alamat = jObj.getString(Db().TAG_ALAMAT)
-                        prefMan.latA = jObj.getString(Db().TAG_LATA)
-                        prefMan.lonA = jObj.getString(Db().TAG_LONA)
+                        prefMan.userID = jObj.getInt(Db.TAG_IDTRACK).toString()
+                        prefMan.name = jObj.getString(Db.TAG_NAMA)
+                        prefMan.alamat = jObj.getString(Db.TAG_ALAMAT)
+                        prefMan.latA = jObj.getString(Db.TAG_LATA)
+                        prefMan.lonA = jObj.getString(Db.TAG_LONA)
                         AlertDialogUtility.withSingleAction(this, "OK", "Gawai anda telah terdaftar!", "check_success.json"
                         ) {
                             val intent = Intent(this@CheckDevice, ActivityMenu::class.java)
@@ -91,7 +91,7 @@ class CheckDevice : AppCompatActivity() {
                         }
                     } else {
                         checkGoner()
-                        AlertDialogUtility.withSingleAction(this, "OK", "Silahkan daftarkan gawai anda!", "warning.json"
+                        AlertDialogUtility.withSingleAction(this, "OK", jObj.getString(Db.TAG_MESSAGE), "warning.json"
                         ) {
                             val intent = Intent(this@CheckDevice, Karantina::class.java)
                             startActivity(intent)
@@ -116,7 +116,7 @@ class CheckDevice : AppCompatActivity() {
             override fun getParams(): Map<String, String> {
                 // Posting parameters to login url
                 val params: MutableMap<String, String> = HashMap()
-                params[TAG_DEVICEID] = deviceID
+                params[Db.TAG_DEVICEID] = deviceID
                 return params
             }
         }

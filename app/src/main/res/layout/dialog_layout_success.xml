@@ -32,9 +32,9 @@
                 android:layout_marginTop="3dp"
                 android:text="This is Alert Dialog"
                 android:textAlignment="center"
-                android:textColor="@android:color/black"
+                android:textColor="@color/covidPrimary"
+                android:fontFamily="@font/segoeui"
                 android:textSize="18sp"/>
-
 
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/lottie_anim"
@@ -58,7 +58,8 @@
                 android:layout_marginTop="5dp"
                 android:padding="10dp"
                 android:text="OK"
-                android:textAllCaps="false"
+                android:fontFamily="@font/seguisb"
+                android:textAllCaps="true"
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 app:backgroundTint="#00796B"
@@ -80,7 +81,9 @@
                     android:layout_marginTop="5dp"
                     android:padding="10dp"
                     android:text="DOWNLOAD"
-                    android:textAllCaps="false"
+
+                    android:fontFamily="@font/seguisb"
+                    android:textAllCaps="true"
                     android:textColor="@color/white"
                     android:textSize="14sp"
                     app:backgroundTint="#C2185B"

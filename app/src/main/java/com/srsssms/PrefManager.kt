@@ -64,7 +64,7 @@ class PrefManager(_context: Context) {
         private const val LOGGED = "logged"
         private const val USERID = "user_id"
         private const val NAME = "name"
-        private const val IMEI = "device_id"
+        private const val IMEI = "deviceid"
         private const val ALAMAT = "alamat"
         private const val LATA = "latitude_a"
         private const val LONA = "longitude_a"
