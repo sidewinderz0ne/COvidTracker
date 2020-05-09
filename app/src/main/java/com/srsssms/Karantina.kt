@@ -61,13 +61,7 @@ class Karantina : AppCompatActivity() {
                 val jObj = JSONObject(response)
                 val success = jObj.getInt(Db.TAG_SUCCESS)
 
-                // Check for error node in json
                 if (success == 1) {
-                    val prefMan = PrefManager(this)
-/*                    prefMan.logged = true
-                    prefMan.userID = jObj.getInt(Db.TAG_IDTRACK).toString()
-                    prefMan.name = jObj.getString(Db.TAG_NAMA)
-                    prefMan.alamat = jObj.getString(Db.TAG_ALAMAT)*/
                     progressBarHolderRegister.visibility = View.GONE
                     AlertDialogUtility.withSingleAction(this,"Masuk","Data telah masuk!","success.json"){
                         val intent = Intent(this@Karantina, Splash::class.java)

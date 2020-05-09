@@ -12,5 +12,6 @@ object Db {
     val TAG_ALAMAT = "alamat"
     val TAG_SUCCESS = "success"
     val TAG_MESSAGE = "message"
+    val TAG_STATUSAKUN = "status_akun"
     val TAG_URL = "https://covid.srs-ssms.com/apk/"
 }

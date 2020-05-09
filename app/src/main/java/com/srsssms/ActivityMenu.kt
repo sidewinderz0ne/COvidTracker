@@ -3,7 +3,6 @@ package com.srsssms
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
@@ -13,7 +12,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
-import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -49,6 +47,7 @@ class ActivityMenu : AppCompatActivity() {
     var mRequestingLocationUpdates: Boolean? = true
     var mLastUpdateTime: String? = null
     var lat: Double? = null
+    var dist: Double? = null
     var lon: Double? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,12 +56,20 @@ class ActivityMenu : AppCompatActivity() {
         val prefMan = PrefManager(this)
         tvNamaMain.text = prefMan.name
 
+        if (prefMan.statusAkun == 2){
+            btKarantina.visibility = View.GONE
+            btMonitor.visibility = View.GONE
+            AlertDialogUtility.alertDialog(this, "Terima kasih telah berpartisipasi dalam pengendalian Covid 19!!", "success.json")
+        } else if (prefMan.statusAkun <= 3){
+            btMonitor.visibility = View.GONE
+        }
+
         updateValuesFromBundle(savedInstanceState)
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         mSettingsClient = LocationServices.getSettingsClient(this)
 
         btKarantina.setOnClickListener {
-            AlertDialogUtility.withTwoActions(this,"nanti","daftarkan","Apakah anda ingin mendaftarkan lokasi anda?", "checking.json"){
+            AlertDialogUtility.withTwoActions(this,"nanti","daftarkan","Anda harus berada di luar ruangan ketika mengaktifkan fitur ini. Apakah anda ingin mendaftarkan lokasi anda?", "checking.json"){
                 if (lat != null && lon != null){
                     registerLocation()
                 } else {
@@ -91,23 +98,39 @@ class ActivityMenu : AppCompatActivity() {
 
     }
 
+    @Suppress("LocalVariableName")
+    fun distance(latA:Double, lonA:Double, latB: Double, lonB: Double):Double{
+        val R = 6371e3 // metres
+        val phase1 = latA * Math.PI/180 // φ, λ in radians
+        val phase2 = latB * Math.PI/180
+        val deltaPhase = (latB-latA) * Math.PI/180
+        val deltaLambda = (lonB-lonA) * Math.PI/180
+
+        val a = Math.sin(deltaPhase/2) * Math.sin(deltaPhase/2) +
+                Math.cos(phase1) * Math.cos(phase2) *
+                Math.sin(deltaLambda/2) * Math.sin(deltaLambda/2)
+        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+        val d = R * c // in metres
+        return d
+    }
+
     private fun trackLocation(namaLengkap: String, deviceid: String, latitude: Double, longitude: Double,
                               waktu: String, alamat: String) {
-        val strReq: StringRequest = object : StringRequest(Method.POST, "${Db.TAG_URL}tracking", Response.Listener { response ->
+        val strReq: StringRequest = object : StringRequest(Method.POST, "https://palmsentry.srs-ssms.com/palmsentry/tracking.php", Response.Listener { response ->
             try {
                 val jObj = JSONObject(response)
                 val success = jObj.getInt(Db.TAG_SUCCESS)
                 if (success == 1) {
-                    Toast.makeText(this@ActivityMenu, "sukses", Toast.LENGTH_LONG).show()
+                    Toasty.error(this, "Anda berjalan terlalu jauh dari tempat tinggal anda (${dist}m))", Toasty.LENGTH_LONG).show()
                 } else{
                     Toast.makeText(applicationContext,
                         jObj.getString(success.toString()), Toast.LENGTH_LONG).show()
                 }
             } catch (e: JSONException) {
-                /*Toast.makeText(this@MainActivity, "error response", Toast.LENGTH_LONG).show()*/
+                Toast.makeText(this@ActivityMenu, "error response $e", Toast.LENGTH_LONG).show()
             }
         }, Response.ErrorListener { error ->
-            /*Toast.makeText(this@MainActivity, "error ga terkirim", Toast.LENGTH_LONG).show()*/
+            Toasty.error(this, "Tidak ada internet! Anda berjalan terlalu jauh dari tempat tinggal anda (${dist}m))", Toasty.LENGTH_LONG).show()
         }) {
             override fun getParams(): Map<String, String> {
                 val params: MutableMap<String, String> = HashMap()
@@ -223,7 +246,8 @@ class ActivityMenu : AppCompatActivity() {
     @SuppressLint("SetTextI18n", "SimpleDateFormat")
     private fun updateLocationUI() {
         val prefManager = PrefManager(this)
-        if (mCurrentLocation != null) {
+        if (mCurrentLocation != null){
+            Toasty.success(this, "Base location(${prefManager.latA},${prefManager.latA})", Toasty.LENGTH_SHORT).show()
             val dateFormatted = SimpleDateFormat("yyyy-M-dd hh:mm:ss").format(Calendar.getInstance().time)
             lat = String.format(
                 Locale.ENGLISH, "%s",
@@ -231,9 +255,12 @@ class ActivityMenu : AppCompatActivity() {
             lon = String.format(
                 Locale.ENGLISH, "%s",
                 mCurrentLocation!!.longitude).toDouble()
+            dist = distance(prefManager.latA.toDouble(), prefManager.lonA.toDouble(), lat!!.toDouble(), lon!!.toDouble())
             locationIndicator.setImageResource(R.drawable.ic_location_on_black_24dp)
             locationIndicator.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.green_basiccolor))
-            trackLocation(prefManager.name!!, prefManager.imei!!, lat!!, lon!!, dateFormatted, prefManager.alamat!!)
+            if (prefManager.latA != 0f && dist!! > 60.0){
+                trackLocation(prefManager.name!!, prefManager.imei!!, lat!!, lon!!, dateFormatted, prefManager.alamat!!)
+            }
         }
     }
 
@@ -359,11 +386,10 @@ class ActivityMenu : AppCompatActivity() {
     }
 
     private fun registerLocation() {
-
         val hid = Settings.Secure.getString(this@ActivityMenu.contentResolver, Settings.Secure.ANDROID_ID)
         Toasty.success(this, "lat:$lat || lon:$lon || id:${hid}")
         progressBarHolderMain.visibility = View.VISIBLE
-        val strReq: StringRequest = object : StringRequest(Method.POST, "${Db.TAG_URL}registerloc.php", Response.Listener { response ->
+        val strReq: StringRequest = object : StringRequest(Method.POST, "${Db.TAG_URL}loc.php", Response.Listener { response ->
             try {
                 val jObj = JSONObject(response)
                 val success = jObj.getInt(Db.TAG_SUCCESS)
@@ -371,8 +397,8 @@ class ActivityMenu : AppCompatActivity() {
                 if (success == 1) {
                     progressBarHolderMain.visibility = View.GONE
                     AlertDialogUtility.alertDialog(this, "Data telah masuk!", "success.json")
-                    val intent = Intent(this@ActivityMenu, ActivityMenu::class.java)
-                    startActivity(intent)
+                    PrefManager(this).latA = lat!!.toFloat()
+                    PrefManager(this).lonA = lon!!.toFloat()
                 } else {
                     progressBarHolderMain.visibility = View.GONE
                     Toast.makeText(applicationContext, jObj.getString(Db.TAG_MESSAGE), Toast.LENGTH_LONG).show()
@@ -398,6 +424,8 @@ class ActivityMenu : AppCompatActivity() {
                 params[Db.TAG_LATA] = lat.toString()
                 params[Db.TAG_LONA] = lon.toString()
                 params[Db.TAG_DEVICEID] = hid
+                params[Db.TAG_STATUSAKUN] = "2"
+                PrefManager(this@ActivityMenu).statusAkun = 2
                 return params
             }
         }

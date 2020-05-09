@@ -37,17 +37,17 @@ class PrefManager(_context: Context) {
             editor.commit()
         }
 
-    var latA: String?
-        get() = pref.getString(LATA, null)
+    var latA: Float
+        get() = pref.getFloat(LATA, 0f)
         set(lata) {
-            editor.putString(LATA, lata)
+            editor.putFloat(LATA, lata)
             editor.commit()
         }
 
-    var lonA: String?
-        get() = pref.getString(LONA, null)
+    var lonA: Float
+        get() = pref.getFloat(LONA, 0f)
         set(lona) {
-            editor.putString(LONA, lona)
+            editor.putFloat(LONA, lona)
             editor.commit()
         }
 
@@ -55,6 +55,13 @@ class PrefManager(_context: Context) {
         get() = pref.getString(USERID, null)
         set(user) {
             editor.putString(USERID, user)
+            editor.commit()
+        }
+
+    var statusAkun: Int
+        get() = pref.getInt(AKUN, 0)
+        set(akun) {
+            editor.putInt(AKUN, akun)
             editor.commit()
         }
 
@@ -68,6 +75,7 @@ class PrefManager(_context: Context) {
         private const val ALAMAT = "alamat"
         private const val LATA = "latitude_a"
         private const val LONA = "longitude_a"
+        private const val AKUN = "status_akun"
     }
 
     init {

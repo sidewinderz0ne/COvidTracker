@@ -80,10 +80,11 @@ class CheckDevice : AppCompatActivity() {
                         val prefMan = PrefManager(this)
                         prefMan.logged = true
                         prefMan.userID = jObj.getInt(Db.TAG_IDTRACK).toString()
+                        prefMan.statusAkun = jObj.getInt(Db.TAG_STATUSAKUN)
                         prefMan.name = jObj.getString(Db.TAG_NAMA)
                         prefMan.alamat = jObj.getString(Db.TAG_ALAMAT)
-                        prefMan.latA = jObj.getString(Db.TAG_LATA)
-                        prefMan.lonA = jObj.getString(Db.TAG_LONA)
+                        prefMan.latA = jObj.getString(Db.TAG_LATA).toFloat()
+                        prefMan.lonA = jObj.getString(Db.TAG_LONA).toFloat()
                         AlertDialogUtility.withSingleAction(this, "OK", "Gawai anda telah terdaftar!", "check_success.json"
                         ) {
                             val intent = Intent(this@CheckDevice, ActivityMenu::class.java)
