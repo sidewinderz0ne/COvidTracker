@@ -1,5 +1,6 @@
 package com.srsssms
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.webkit.WebView
@@ -16,6 +17,11 @@ class ActivityMonitor : AppCompatActivity() {
         myWebView.getSettings().setBuiltInZoomControls(false)
         myWebView.webViewClient = WebViewClient()
         myWebView.loadUrl("https://covid.srs-ssms.com/admin/login")
+
+        btHomeMonitor.setOnClickListener {
+            val intent = Intent(this@ActivityMonitor, ActivityMenu::class.java)
+            startActivity(intent)
+        }
     }
     override fun onBackPressed() {
         if (webView.canGoBack()) {
