@@ -49,6 +49,7 @@ class ActivityMenu : AppCompatActivity() {
     var lat: Double? = null
     var dist: Double? = null
     var lon: Double? = null
+    val radius = 15.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -258,7 +259,7 @@ class ActivityMenu : AppCompatActivity() {
             dist = distance(prefManager.latA.toDouble(), prefManager.lonA.toDouble(), lat!!.toDouble(), lon!!.toDouble())
             locationIndicator.setImageResource(R.drawable.ic_location_on_black_24dp)
             locationIndicator.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.green_basiccolor))
-            if (prefManager.latA != 0f && dist!! > 60.0){
+            if (prefManager.latA != 0f && dist!! > radius){
                 trackLocation(prefManager.name!!, prefManager.imei!!, lat!!, lon!!, dateFormatted, prefManager.alamat!!)
             }
         }
